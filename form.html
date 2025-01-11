@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago con Izipay</title>
+
+    <!-- Librería de Izipay -->
+    <script
+      type="text/javascript"
+      src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+      kr-public-key="publickey_une7j7gLln3neS7tzRciviv942FIHMFWqKqTEdYlNYFv5"
+    ></script>
+
+    <!-- Estilo del formulario -->
+    <link
+      rel="stylesheet"
+      href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"
+    ></script>
+  </head>
+  <body>
+    <h1>Pagar con Izipay</h1>
+
+    <!-- Botón para iniciar el pago -->
+
+    <!-- Formulario de pago oculto -->
+    <div
+      id="paymentForm"
+      class="kr-embedded"
+      style="display: none; margin-top: 20px"
+    >
+      <div class="kr-pan"></div>
+      <div class="kr-expiry"></div>
+      <div class="kr-security-code"></div>
+      <button class="kr-payment-button">Confirmar Pago</button>
+      <div class="kr-form-error"></div>
+    </div>
+
+    <script>
+      async function onCheckout() {
+        try {
+          // Llamamos al backend para obtener el formToken
+          const response = await fetch("/payment/init", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+          const data = await response.json();
+
+          // Si obtenemos el formToken, mostramos el formulario de pago
+          if (data.formToken) {
+            const paymentForm = document.getElementById("paymentForm");
+            paymentForm.style.display = "block";
+
+            // Inicializamos el formulario de pago de Izipay con el formToken recibido
+            krPaymentForm.init({
+              formToken: data.formToken,
+            });
+          } else {
+            alert("Error al iniciar el pago.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error en el proceso de pago.");
+        }
+      }
+    </script>
+    <script src="./js/script.js"></script>
+  </body>
+</html>
